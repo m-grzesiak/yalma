@@ -3,6 +3,7 @@ from datetime import date
 import click
 from tabulate import tabulate
 
+import config_loader
 import monitoring
 from luxmed_api import LuxmedApi
 
@@ -13,7 +14,7 @@ def _prepare_table_view(data, headers):
 
 @click.group()
 def main():
-    pass
+    config_loader.initialize_app_configuration()
 
 
 @main.command(help='get a list of available cities')
