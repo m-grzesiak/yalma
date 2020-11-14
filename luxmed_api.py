@@ -30,26 +30,7 @@ class LuxmedApi:
                 'client_id': str(uuid.uuid4())
                 }
 
-    def _prepare_headers(self, access_token: str, api_version: str):
-        return {"Authorization": "Bearer " + access_token,
-                "Api-Version": api_version,
-                "accept-language": self._config['language'],
-                "Content-Type": "application/json; charset=UTF-8",
-                "accept-encoding": "gzip",
-                "x-api-client-identifier": "Android",
-                "User-Agent": "okhttp/3.11.0",
-                "Custom-User-Agent": LuxmedApi._CUSTOM_USER_AGENT
-                }
-
-    def _send_request_for_filters(self, access_token: str, params: {}):
-        headers = self._prepare_headers(access_token, "3.0")
-
-        response = requests.get("%s/visits/available-terms/reservation-filter" % LuxmedApi._API_BASE_URL,
-                                headers=headers, params=params)
-        self._validate_response(response)
-        return response.json()
-
-    def get_access_token(self) -> str:
+    def _get_access_token(self) -> str:
         print("Retrieving an access token from the Luxmed API...")
 
         headers = {"Api-Version": "2.0",
@@ -68,10 +49,31 @@ class LuxmedApi:
         print("The access token has been successfully retrieved")
         return response.json()['access_token']
 
-    def get_cities(self, access_token: str) -> []:
+    def _prepare_headers(self, api_version: str):
+        access_token = self._get_access_token()
+
+        return {"Authorization": "Bearer " + access_token,
+                "Api-Version": api_version,
+                "accept-language": self._config['language'],
+                "Content-Type": "application/json; charset=UTF-8",
+                "accept-encoding": "gzip",
+                "x-api-client-identifier": "Android",
+                "User-Agent": "okhttp/3.11.0",
+                "Custom-User-Agent": LuxmedApi._CUSTOM_USER_AGENT
+                }
+
+    def _send_request_for_filters(self, params: {} = ()):
+        headers = self._prepare_headers("3.0")
+
+        response = requests.get("%s/visits/available-terms/reservation-filter" % LuxmedApi._API_BASE_URL,
+                                headers=headers, params=params)
+        self._validate_response(response)
+        return response.json()
+
+    def get_cities(self) -> []:
         print("Retrieving cities from the Luxmed API...")
 
-        response_body = self._send_request_for_filters(access_token, {})
+        response_body = self._send_request_for_filters()
 
         cities = []
         for city in response_body['Cities']:
@@ -80,11 +82,11 @@ class LuxmedApi:
             cities.append((city_id, city_name))
         return cities
 
-    def get_services(self, access_token: str, city_id: int) -> []:
+    def get_services(self, city_id: int) -> []:
         print("Retrieving services from the Luxmed API...")
 
         params = {"filter.cityId": city_id}
-        response_body = self._send_request_for_filters(access_token, params)
+        response_body = self._send_request_for_filters(params)
 
         services = []
         for service in response_body['Services']:
@@ -93,11 +95,11 @@ class LuxmedApi:
             services.append((service_id, service_name))
         return services
 
-    def get_visits(self, access_token: str, city_id: int, service_id: int, from_date: str, to_date: str,
+    def get_visits(self, city_id: int, service_id: int, from_date: str, to_date: str,
                    clinic_id: int = None, doctor_id: int = None) -> []:
         print("Getting visits for given search parameters...")
 
-        headers = self._prepare_headers(access_token, "2.0")
+        headers = self._prepare_headers("2.0")
 
         params = {
             "filter.cityId": city_id,
