@@ -20,8 +20,7 @@ def main():
 @main.command(help='get a list of available cities')
 def cities():
     api = LuxmedApi()
-    access_token = api.get_access_token()
-    cities = api.get_cities(access_token)
+    cities = api.get_cities()
     table_view = _prepare_table_view(cities, ["city ID", "city name"])
     print(table_view)
 
@@ -30,8 +29,7 @@ def cities():
 @click.option('-c', '--city-id', type=int, required=True, help='return a list of services for the given city ID')
 def services(city_id):
     api = LuxmedApi()
-    access_token = api.get_access_token()
-    services = api.get_services(access_token, city_id)
+    services = api.get_services(city_id)
     table_view = _prepare_table_view(services, ["service ID", "service name"])
     print(table_view)
 
@@ -51,8 +49,7 @@ def monitor(email, city_id, service_id, from_date, to_date):
     parsed_from_date = from_date.date()
     parsed_to_date = to_date.date()
     api = LuxmedApi()
-    access_token = api.get_access_token()
-    visits = api.get_visits(access_token, city_id, service_id, parsed_from_date, parsed_to_date)
+    visits = api.get_visits(city_id, service_id, parsed_from_date, parsed_to_date)
     monitoring.monitor_visits(visits, email)
 
 
