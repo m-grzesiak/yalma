@@ -7,7 +7,7 @@ If any visits that fulfill your criteria become available, Yalma will notify you
 Currently, the app supports to monitor availability considering the city, service and date range which you are 
 interested in, but in the future, you will be able to choose a doctor, clinic and a time of day as well.
 
-![](demo.svg)
+[<img src="demo.svg">]()
 
 ## Installation
 1. Install required dependencies by `pip install -r requirements.txt`
