@@ -54,11 +54,12 @@ def services(city_id):
 @click.option('-t', '--to-date', type=click.DateTime(formats=["%Y-%m-%d"]), required=True,
               help='finish on the given date. The date should be in a year-month-day format. '
                    'Example: 2020-11-30')
-def monitor(email, city_id, service_id, from_date, to_date):
+@click.option('-cl', '--clinic-id', type=int, help='monitor visits in the given clinic')
+def monitor(email, city_id, service_id, from_date, to_date, clinic_id=None):
     parsed_from_date = from_date.date()
     parsed_to_date = to_date.date()
     api = LuxmedApi()
-    visits = api.get_visits(city_id, service_id, parsed_from_date, parsed_to_date)
+    visits = api.get_visits(city_id, service_id, parsed_from_date, parsed_to_date, clinic_id)
     monitoring.monitor_visits(visits, email)
 
 
