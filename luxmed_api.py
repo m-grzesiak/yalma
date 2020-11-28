@@ -121,6 +121,7 @@ class LuxmedApi:
         params = {
             "filter.cityId": city_id,
             "filter.serviceId": service_id,
+            "filter.clinicId": clinic_id,
             "filter.fromDate": from_date,
             "filter.toDate": to_date,
         }
