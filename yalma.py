@@ -25,6 +25,15 @@ def cities():
     print(table_view)
 
 
+@main.command(help='get a list of available clinics')
+@click.option('-c', '--city-id', type=int, required=True, help='return a list of clinics for the given city ID')
+def clinics(city_id):
+    api = LuxmedApi()
+    clinics = api.get_clinics(city_id)
+    table_view = _prepare_table_view(clinics, ["clinic ID", "clinic name"])
+    print(table_view)
+
+
 @main.command(help='get a list of available services')
 @click.option('-c', '--city-id', type=int, required=True, help='return a list of services for the given city ID')
 def services(city_id):

@@ -99,6 +99,19 @@ class LuxmedApi:
             services.append((service_id, service_name))
         return services
 
+    def get_clinics(self, city_id: int) -> []:
+        print("Retrieving clinics from the Luxmed API...")
+
+        params = {"filter.cityId": city_id}
+        response_body = self._send_request_for_filters(params)
+
+        clinics = []
+        for clinic in response_body['Clinics']:
+            clinic_id = clinic['Id']
+            clinic_name = clinic['Name']
+            clinics.append((clinic_id, clinic_name))
+        return clinics
+
     def get_visits(self, city_id: int, service_id: int, from_date: str, to_date: str,
                    clinic_id: int = None, doctor_id: int = None) -> []:
         print("Getting visits for given search parameters...")
