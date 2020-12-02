@@ -112,7 +112,7 @@ class LuxmedApi:
             clinics.append((clinic_id, clinic_name))
         return clinics
 
-    def get_visits(self, city_id: int, service_id: int, from_date: str, to_date: str,
+    def get_visits(self, city_id: int, service_id: int, from_date: str, to_date: str, time_of_day: int,
                    clinic_id: int = None, doctor_id: int = None) -> []:
         print("Getting visits for given search parameters...")
 
@@ -124,6 +124,7 @@ class LuxmedApi:
             "filter.clinicId": clinic_id,
             "filter.fromDate": from_date,
             "filter.toDate": to_date,
+            "filter.timeOfDay": time_of_day
         }
         response = requests.get("%s/visits/available-terms" % LuxmedApi._API_BASE_URL, headers=headers, params=params)
         self._validate_response(response)
