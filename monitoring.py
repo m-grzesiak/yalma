@@ -27,7 +27,7 @@ def _create_report_summary(report: Report) -> str:
 def _create_report_details(report: Report) -> str:
     generated_report = report.get_report()
 
-    report_details = ""
+    report_details = "\n\n--------- REPORT DETAILS ---------"
 
     for term in generated_report['terms']:
         report_details += "\n" + "Date: " + term['date'] + "\n"
