@@ -3,23 +3,41 @@ from report import Report
 
 
 def _notify_about_visits_availability(email_address: str, report: Report):
-    notification_message = _create_notification_message(report)
+    notification_message = _create_report_summary(report) + _create_report_details(report)
     email_sender.send_email(email_address, notification_message)
 
 
-def _create_notification_message(report: Report) -> str:
+def _create_report_summary(report: Report) -> str:
     generated_report = report.get_report()
 
-    notification_message = "Overall number of visits: " + str(generated_report['overall_count']) + "\n\n"
+    report_summary = "Overall number of visits: " + str(generated_report['overall_count']) + "\n\n"
+
     for term in generated_report['terms']:
-        notification_message += "Date: " + term['date'] + "\n" + "Visits available in that day: " + str(
+        report_summary += "Date: " + term['date'] + "\n" + "Visits available in that day: " + str(
             term['count']) + "\nNumber of visits in particular clinics: \n"
+
         for visit in term['visits_in_clinics']:
-            notification_message += "* " + visit['clinic_name'] + ": " + str(visit['count']) + "\n"
+            report_summary += "* " + visit['clinic_name'] + ": " + str(visit['count']) + "\n"
 
-        notification_message += "\n"
+        report_summary += "\n"
 
-    return notification_message
+    return report_summary
+
+
+def _create_report_details(report: Report) -> str:
+    generated_report = report.get_report()
+
+    report_details = "\n\n--------- REPORT DETAILS ---------"
+
+    for term in generated_report['terms']:
+        report_details += "\n" + "Date: " + term['date'] + "\n"
+
+        for visit in term['visits_in_clinics']:
+            report_details += "\nClinic name: " + visit['clinic_name'] + "\n"
+            for visits_in_day in visit['visits']:
+                report_details += "[" + visits_in_day['time'] + "] " + visits_in_day['doctor_name'] + "\n"
+
+    return report_details
 
 
 def monitor_visits(visits: {}, email_address: str):
