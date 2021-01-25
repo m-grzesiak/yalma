@@ -1,11 +1,16 @@
 # Yalma
 (**Y**et **A**nother **L**uxmed **M**onitoring **A**pp)
 
+* [What this is about?](#what-this-is-about)
+* [Installation](#installation)
+* [Usage](#usage)
+* [TODO](#todo)
+
 ## What this is about?
 Yalma is an application that allows monitoring visits availability in Luxmed for helping you to take care of your health. 
 If any visits that fulfill your criteria become available, Yalma will notify you about that by email. 
-Currently, the app supports to monitor availability considering the city, service and date range which you are 
-interested in, but in the future, you will be able to choose a doctor, clinic and a time of day as well.
+Currently, the app supports to monitor availability considering the city, service, clinic, time of day and date range 
+which you are interested in, but in the future, you will be able to choose a doctor as well.
 
 [<img src="demo.svg">]()
 
@@ -44,9 +49,9 @@ interested in, but in the future, you will be able to choose a doctor, clinic an
     as a port.
  
 ## Usage
- First of all, just run the app by `python yalma.py` command. To start to monitor available visits, you have to know 
+ First of all, just run the app by the `python yalma.py` command. To start to monitor available visits, you have to know 
  in which city you are going to monitor visits and decide what the service will be. The service is a consultation 
- with a doctor or an examination. Those data are represented by IDs. So let's get them! Let's start from the getting
+ with a doctor or an examination. Those data are represented by IDs. So let's get them! Let's start by getting
  your city ID:
  
  ```shell script
@@ -84,5 +89,11 @@ python yalma.py monitor --help
 python yalma.py --help
 ```
 
- Now it's your turn - try to invoke this option on each command (`cities`, `services` and `monitor`) - thanks to that 
- you will know every functionality in the app.
+ Now it's your turn - try to invoke this option on each command (`cities`, `clinics`, `services` and `monitor`) - thanks
+ to that you will know every functionality in the app.
+ 
+## TODO
+1. Implement some basic configuration wizard to get rid of manual procedure for creation a config.ini in manually way ;)
+2. Add support for monitoring visits availability for a given doctor.
+3. Create a more user-friendly report sent by email - maybe it should be sent as HTML with well-defined sections.
+4. Write the whole app like a pr0, with proper tests and using Python syntax like a pr0 - sorry, I'm a Java developer ;)
