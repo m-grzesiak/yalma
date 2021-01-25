@@ -1,7 +1,7 @@
 # Yalma
 (**Y**et **A**nother **L**uxmed **M**onitoring **A**pp)
 
-* [What this is about?](#what-is-this-about)
+* [What is this about?](#what-is-this-about)
 * [Installation](#installation)
 * [Usage](#usage)
 * [TODO](#todo)
