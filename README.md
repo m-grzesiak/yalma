@@ -1,12 +1,12 @@
 # Yalma
 (**Y**et **A**nother **L**uxmed **M**onitoring **A**pp)
 
-* [What this is about?](#what-this-is-about)
+* [What this is about?](#what-is-this-about)
 * [Installation](#installation)
 * [Usage](#usage)
 * [TODO](#todo)
 
-## What this is about?
+## What is this about?
 Yalma is an application that allows monitoring visits availability in Luxmed for helping you to take care of your health. 
 If any visits that fulfill your criteria become available, Yalma will notify you about that by email. 
 Currently, the app supports to monitor availability considering the city, service, clinic, time of day and date range 
