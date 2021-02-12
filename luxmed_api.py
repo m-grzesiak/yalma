@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 import random
 
 import requests
@@ -164,8 +163,7 @@ class LuxmedApi:
                 current_day_visits.append(visit)
 
             date_with_time = visits_in_current_day['VisitDate']['StartDateTime']
-            date = str(datetime.fromisoformat(date_with_time).date())
-            visits_in_day = {'date': date, 'visits': current_day_visits}
+            visits_in_day = {'date': date_with_time, 'visits': current_day_visits}
             found_visits.append(visits_in_day)
 
         return found_visits
