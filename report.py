@@ -1,4 +1,11 @@
+from datetime import datetime
+
+
 class Report:
+
+    @staticmethod
+    def _convert_date(date):
+        return datetime.fromisoformat(date).strftime('%d.%m.%Y')
 
     @staticmethod
     def _generate_report(all_terms: []) -> {}:
@@ -8,7 +15,7 @@ class Report:
         for term in all_terms:
             visits_in_clinics = Report._group_visits_by_clinic(term)
 
-            date = term['date']
+            date = Report._convert_date(term['date'])
             count = len(term['visits'])
             term = {'date': date, 'count': count, 'visits': term['visits'], 'visits_in_clinics': visits_in_clinics}
 
@@ -45,7 +52,7 @@ class Report:
         return visits_in_clinics
 
     def __init__(self, all_terms):
-        self._report = self._generate_report(all_terms)
+        self._report = Report._generate_report(all_terms)
 
     def get_report(self) -> {}:
         return self._report
