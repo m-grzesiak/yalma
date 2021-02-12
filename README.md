@@ -89,8 +89,8 @@ python yalma.py monitor --help
 python yalma.py --help
 ```
 
- Now it's your turn - try to invoke this option on each command (`cities`, `clinics`, `services` and `monitor`) - thanks
- to that you will know every functionality in the app.
+ Now it's your turn - try to invoke this option on each command (`cities`, `clinics`, `doctors`, `services`
+ and `monitor`) - thanks to that you will know every functionality in the app.
  
 ## TODO
 1. Implement some basic configuration wizard to get rid of manual procedure for creation a config.ini in manually way ;)
