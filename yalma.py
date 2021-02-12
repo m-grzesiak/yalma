@@ -34,6 +34,17 @@ def clinics(city_id):
     print(table_view)
 
 
+@main.command(help='get a list of available doctors')
+@click.option('-c', '--city-id', type=int, required=True, help='a city where doctors should be located')
+@click.option('-s', '--service-id', type=int, required=True, help='a service that doctors should be specialized in')
+@click.option('-cl', '--clinic-id', type=int, help='a clinic where you are looking for doctors')
+def doctors(city_id, service_id, clinic_id):
+    api = LuxmedApi()
+    retrieved_doctors = api.get_doctors(city_id, service_id, clinic_id)
+    table_view = _prepare_table_view(retrieved_doctors, ["doctor ID", "doctor name"])
+    print(table_view)
+
+
 @main.command(help='get a list of available services')
 @click.option('-c', '--city-id', type=int, required=True, help='return a list of services for the given city ID')
 def services(city_id):
@@ -55,6 +66,7 @@ def services(city_id):
               help='finish on the given date. The date should be in a year-month-day format. '
                    'Example: 2020-11-30')
 @click.option('-cl', '--clinic-id', type=int, help='monitor visits in the given clinic')
+@click.option('-d', '--doctor-id', type=int, help='monitor visits for the given doctor')
 @click.option('-td', '--time-of-day', type=click.IntRange(0, 3),
               default=0, show_default=True,
               help='time of day. If not provided, all day will be considered. Possible values: '
@@ -62,11 +74,11 @@ def services(city_id):
                    '1 - until 10:00, '
                    '2 - from 10:00 to 17:00, '
                    '3 - after 17:00')
-def monitor(email, city_id, service_id, from_date, to_date, time_of_day, clinic_id=None):
+def monitor(email, city_id, service_id, from_date, to_date, time_of_day, clinic_id=None, doctor_id=None):
     parsed_from_date = from_date.date()
     parsed_to_date = to_date.date()
     api = LuxmedApi()
-    visits = api.get_visits(city_id, service_id, parsed_from_date, parsed_to_date, time_of_day, clinic_id)
+    visits = api.get_visits(city_id, service_id, parsed_from_date, parsed_to_date, time_of_day, clinic_id, doctor_id)
     monitoring.monitor_visits(visits, email)
 
 
