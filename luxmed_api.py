@@ -11,7 +11,6 @@ class LuxmedApiException(Exception):
 
 
 class LuxmedApi:
-
     _CUSTOM_USER_AGENT = "Patient Portal; 3.20.5; {}; Android; {}; {}".format(
         str(uuid.uuid4()), str(random.randint(23, 29)), str(uuid.uuid4())
     )
@@ -21,6 +20,10 @@ class LuxmedApi:
     def _validate_response(response):
         if response.status_code != 200:
             raise LuxmedApiException(response.json())
+
+    @staticmethod
+    def _parse_results_from_filters(results: {}):
+        return [(item['Id'], item['Name']) for item in results]
 
     def __init__(self):
         self._config = config_loader.read_configuration("luxmed", ['username', 'password', 'language'])
@@ -34,8 +37,6 @@ class LuxmedApi:
                 }
 
     def _get_access_token(self) -> str:
-        print("Retrieving an access token from the Luxmed API...")
-
         headers = {"Api-Version": "2.0",
                    "accept-language": self._config['language'],
                    "Content-Type": "application/x-www-form-urlencoded",
@@ -48,8 +49,7 @@ class LuxmedApi:
 
         response = requests.post("%s/token" % LuxmedApi._API_BASE_URL, headers=headers, data=authentication_body)
 
-        self._validate_response(response)
-        print("The access token has been successfully retrieved")
+        LuxmedApi._validate_response(response)
         return response.json()['access_token']
 
     def _prepare_headers(self, api_version: str):
@@ -70,46 +70,28 @@ class LuxmedApi:
 
         response = requests.get("%s/visits/available-terms/reservation-filter" % LuxmedApi._API_BASE_URL,
                                 headers=headers, params=params)
-        self._validate_response(response)
+        LuxmedApi._validate_response(response)
         return response.json()
 
     def get_cities(self) -> []:
         print("Retrieving cities from the Luxmed API...")
 
         response_body = self._send_request_for_filters()
-
-        cities = []
-        for city in response_body['Cities']:
-            city_id = city['Id']
-            city_name = city['Name']
-            cities.append((city_id, city_name))
-        return cities
+        return LuxmedApi._parse_results_from_filters(response_body["Cities"])
 
     def get_services(self, city_id: int) -> []:
         print("Retrieving services from the Luxmed API...")
 
         params = {"filter.cityId": city_id}
         response_body = self._send_request_for_filters(params)
-
-        services = []
-        for service in response_body['Services']:
-            service_id = service['Id']
-            service_name = service['Name']
-            services.append((service_id, service_name))
-        return services
+        return LuxmedApi._parse_results_from_filters(response_body["Services"])
 
     def get_clinics(self, city_id: int) -> []:
         print("Retrieving clinics from the Luxmed API...")
 
         params = {"filter.cityId": city_id}
         response_body = self._send_request_for_filters(params)
-
-        clinics = []
-        for clinic in response_body['Clinics']:
-            clinic_id = clinic['Id']
-            clinic_name = clinic['Name']
-            clinics.append((clinic_id, clinic_name))
-        return clinics
+        return LuxmedApi._parse_results_from_filters(response_body["Clinics"])
 
     def get_doctors(self, city_id: int, service_id: int, clinic_id: int = None) -> []:
         print("Retrieving doctors from the Luxmed API...")
@@ -120,13 +102,7 @@ class LuxmedApi:
             "filter.clinicId": clinic_id
         }
         response_body = self._send_request_for_filters(params)
-
-        doctors = []
-        for doctor in response_body['Doctors']:
-            doctor_id = doctor['Id']
-            doctor_name = doctor['Name']
-            doctors.append((doctor_id, doctor_name))
-        return doctors
+        return LuxmedApi._parse_results_from_filters(response_body["Doctors"])
 
     def get_visits(self, city_id: int, service_id: int, from_date: str, to_date: str, time_of_day: int,
                    clinic_id: int = None, doctor_id: int = None) -> []:
@@ -144,7 +120,7 @@ class LuxmedApi:
             "filter.timeOfDay": time_of_day
         }
         response = requests.get("%s/visits/available-terms" % LuxmedApi._API_BASE_URL, headers=headers, params=params)
-        self._validate_response(response)
+        LuxmedApi._validate_response(response)
 
         raw_visits = response.json()
 
