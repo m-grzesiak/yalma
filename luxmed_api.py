@@ -11,7 +11,7 @@ class LuxmedApiException(Exception):
 
 
 class LuxmedApi:
-    _CUSTOM_USER_AGENT = "Patient Portal; 3.20.5; {}; Android; {}; {}".format(
+    _CUSTOM_USER_AGENT = "Patient Portal; 4.9.1; {}; Android; {}; {}".format(
         str(uuid.uuid4()), str(random.randint(23, 29)), str(uuid.uuid4())
     )
     _API_BASE_URL = "https://portalpacjenta.luxmed.pl/PatientPortalMobileAPI/api"
