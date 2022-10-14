@@ -1,5 +1,7 @@
+from datetime import datetime
 import uuid
 import random
+from collections import defaultdict
 
 import requests
 
@@ -11,7 +13,7 @@ class LuxmedApiException(Exception):
 
 
 class LuxmedApi:
-    _CUSTOM_USER_AGENT = "Patient Portal; 4.9.1; {}; Android; {}; {}".format(
+    _CUSTOM_USER_AGENT = "Patient Portal; 4.14.0; {}; Android; {}; {}".format(
         str(uuid.uuid4()), str(random.randint(23, 29)), str(uuid.uuid4())
     )
     _API_BASE_URL = "https://portalpacjenta.luxmed.pl/PatientPortalMobileAPI/api"
@@ -56,7 +58,6 @@ class LuxmedApi:
         access_token = self._get_access_token()
 
         return {"Authorization": "Bearer " + access_token,
-                "Api-Version": api_version,
                 "accept-language": self._config['language'],
                 "Content-Type": "application/json; charset=UTF-8",
                 "accept-encoding": "gzip",
@@ -112,6 +113,7 @@ class LuxmedApi:
 
         params = {
             "filter.cityId": city_id,
+            "filter.payerId": 123,
             "filter.serviceId": service_id,
             "filter.clinicId": clinic_id,
             "filter.doctorId": doctor_id,
@@ -124,22 +126,21 @@ class LuxmedApi:
 
         raw_visits = response.json()
 
-        normal_visits = raw_visits['AgregateAvailableVisitTerms']
+        normal_visits = raw_visits['AvailableVisitsTermPresentation']
 
         found_visits = []
 
-        for visits_in_current_day in normal_visits:
-            current_day_visits = []
+        visits_in_day = defaultdict(list)
 
-            for current_visit in visits_in_current_day['AvailableVisitsTermPresentation']:
-                visit_time = current_visit['FormattedVisitHour']
-                doctor_name = current_visit['Doctor']['Name']
-                clinic_name = current_visit['Clinic']['Name']
-                visit = {'time': visit_time, 'doctor_name': doctor_name, 'clinic_name': clinic_name}
-                current_day_visits.append(visit)
+        for current_visit in normal_visits:
+            visit_time = current_visit['VisitDate']['StartDateTime']
+            doctor_name = current_visit['Doctor']['Name']
+            clinic_name = current_visit['Clinic']['Name']
+            visit = {'time': visit_time, 'doctor_name': doctor_name, 'clinic_name': clinic_name}
 
-            date_with_time = visits_in_current_day['VisitDate']['StartDateTime']
-            visits_in_day = {'date': date_with_time, 'visits': current_day_visits}
-            found_visits.append(visits_in_day)
+            visits_in_day[datetime.fromisoformat(visit_time).date()].append(visit)
+
+        for date, visits in visits_in_day.items():
+            found_visits.append({'date': date, 'visits': visits})
 
         return found_visits

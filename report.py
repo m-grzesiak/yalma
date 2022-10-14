@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import date
 
 
 class Report:
 
     @staticmethod
-    def _convert_date(date):
-        return datetime.fromisoformat(date).strftime('%d.%m.%Y')
+    def _convert_date(date: date):
+        return date.strftime('%d.%m.%Y')
 
     @staticmethod
     def _generate_report(all_terms: []) -> {}:
