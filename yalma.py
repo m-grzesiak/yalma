@@ -4,11 +4,11 @@ import click
 from tabulate import tabulate
 
 import config_loader
-import monitoring
-from luxmed_api import LuxmedApi
+import luxmed_api
+import report_generator
 
 
-def _display_results(data, headers):
+def __display_results(data, headers):
     if data:
         table_view = tabulate(data, headers=headers, tablefmt="psql")
         print(table_view)
@@ -23,17 +23,16 @@ def main():
 
 @main.command(help='get a list of available cities')
 def cities():
-    api = LuxmedApi()
-    retrieved_cities = api.get_cities()
-    _display_results(retrieved_cities, ["city ID", "city name"])
+    retrieved_cities = luxmed_api.get_cities()
+    __display_results(retrieved_cities, ["city ID", "city name"])
 
 
 @main.command(help='get a list of available clinics')
 @click.option('-c', '--city-id', type=int, required=True, help='return a list of clinics for the given city ID')
-def clinics(city_id):
-    api = LuxmedApi()
-    retrieved_clinics = api.get_clinics(city_id)
-    _display_results(retrieved_clinics, ["clinic ID", "clinic name"])
+@click.option('-s', '--service-id', type=int, required=True, help='a service that doctors should be specialized in')
+def clinics(city_id, service_id):
+    retrieved_clinics = luxmed_api.get_clinics(city_id, service_id)
+    __display_results(retrieved_clinics, ["clinic ID", "clinic name"])
 
 
 @main.command(help='get a list of available doctors')
@@ -41,17 +40,14 @@ def clinics(city_id):
 @click.option('-s', '--service-id', type=int, required=True, help='a service that doctors should be specialized in')
 @click.option('-cl', '--clinic-id', type=int, help='a clinic where you are looking for doctors')
 def doctors(city_id, service_id, clinic_id):
-    api = LuxmedApi()
-    retrieved_doctors = api.get_doctors(city_id, service_id, clinic_id)
-    _display_results(retrieved_doctors, ["doctor ID", "doctor name"])
+    retrieved_doctors = luxmed_api.get_doctors(city_id, service_id, clinic_id)
+    __display_results(retrieved_doctors, ["doctor ID", "doctor name"])
 
 
 @main.command(help='get a list of available services')
-@click.option('-c', '--city-id', type=int, required=True, help='return a list of services for the given city ID')
-def services(city_id):
-    api = LuxmedApi()
-    retrieved_services = api.get_services(city_id)
-    _display_results(retrieved_services, ["service ID", "service name"])
+def services():
+    retrieved_services = luxmed_api.get_services()
+    __display_results(retrieved_services, ["service ID", "service name"])
 
 
 @main.command(help='monitor the availability of visits for the given criteria')
@@ -71,15 +67,14 @@ def services(city_id):
               default=0, show_default=True,
               help='time of day. If not provided, all day will be considered. Possible values: '
                    '0 - all day, '
-                   '1 - until 10:00, '
-                   '2 - from 10:00 to 17:00, '
+                   '1 - until 12:00, '
+                   '2 - from 12:00 to 17:00, '
                    '3 - after 17:00')
 def monitor(email, city_id, service_id, from_date, to_date, time_of_day, clinic_id=None, doctor_id=None):
     parsed_from_date = from_date.date()
     parsed_to_date = to_date.date()
-    api = LuxmedApi()
-    visits = api.get_visits(city_id, service_id, parsed_from_date, parsed_to_date, time_of_day, clinic_id, doctor_id)
-    monitoring.monitor_visits(visits, email)
+    report_generator.make_report(email, city_id, service_id, parsed_from_date, parsed_to_date, time_of_day, clinic_id,
+                                 doctor_id)
 
 
 if __name__ == '__main__':
