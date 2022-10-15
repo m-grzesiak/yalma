@@ -10,13 +10,13 @@ class EmailSenderException(Exception):
     pass
 
 
-def _load_email_setting():
+def __load_email_setting():
     settings = config_loader.read_configuration('email_settings', ['username', 'password', 'smtp_server', 'smtp_port'])
     return settings['username'], settings['password'], settings['smtp_server'], settings['smtp_port']
 
 
 def send_email(to: str, message: str):
-    username, password, smtp_server, smtp_port = _load_email_setting()
+    username, password, smtp_server, smtp_port = __load_email_setting()
 
     email_message = MIMEText(message)
     email_message['From'] = username

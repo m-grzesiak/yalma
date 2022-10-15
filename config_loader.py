@@ -10,7 +10,7 @@ class ConfigurationValidationException(Exception):
     pass
 
 
-def _get_configuration_directory_path() -> str:
+def __get_configuration_directory_path() -> str:
     current_platform = platform.system()
     user_home_path = Path.home()
 
@@ -21,21 +21,21 @@ def _get_configuration_directory_path() -> str:
             return str(user_home_path) + '/AppData/Local/yalma/'
 
 
-def _prepare_validation_error_message(configuration_section, field) -> str:
+def __prepare_validation_error_message(configuration_section, field) -> str:
     return "A value for field '{}' in section '{}' is not set in a {} file".format(field,
                                                                                    configuration_section,
                                                                                    _CONFIGURATION_FILE_NAME)
 
 
 def initialize_app_configuration():
-    configuration_directory_path = _get_configuration_directory_path()
+    configuration_directory_path = __get_configuration_directory_path()
     Path(configuration_directory_path).mkdir(parents=False, exist_ok=True)
     path_to_config_file = configuration_directory_path + _CONFIGURATION_FILE_NAME
     Path(path_to_config_file).touch()
 
 
 def read_configuration(configuration_section: str, expected_mandatory_fields: [] = ()) -> {}:
-    path_to_config_file = _get_configuration_directory_path() + _CONFIGURATION_FILE_NAME
+    path_to_config_file = __get_configuration_directory_path() + _CONFIGURATION_FILE_NAME
     config_parser = ConfigParser()
 
     with codecs.open(path_to_config_file, 'r', encoding='utf-8') as config_file:
@@ -44,7 +44,7 @@ def read_configuration(configuration_section: str, expected_mandatory_fields: []
 
         for field in expected_mandatory_fields:
             if not configuration.get(field):
-                error_message = _prepare_validation_error_message(configuration_section, field)
+                error_message = __prepare_validation_error_message(configuration_section, field)
                 raise ConfigurationValidationException(error_message)
 
         return configuration

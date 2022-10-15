@@ -17,7 +17,7 @@ def __get_filters(clinic_id, doctor_id, part_of_day) -> [Callable[[Any], Union[b
     ]
 
 
-def filter_visits_by_criteria(visits: [], part_of_day: int, clinic_id: int = None, doctor_id: int = None) -> []:
+def __filter_visits_by_criteria(visits: [], part_of_day: int, clinic_id: int = None, doctor_id: int = None) -> []:
     visit_filters = __get_filters(clinic_id, doctor_id, part_of_day)
 
     filtered_terms = []
@@ -34,5 +34,5 @@ def make_report(email: str, city_id: int, service_id: int, from_date: datetime, 
                 clinic_id: int = None, doctor_id: int = None):
     visits = luxmed_api.get_visits(city_id, service_id, from_date, to_date)
     ready_terms = __filter_visits_by_dates(visits, from_date, to_date)
-    filtered_terms = filter_visits_by_criteria(ready_terms, part_of_day, clinic_id, doctor_id)
+    filtered_terms = __filter_visits_by_criteria(ready_terms, part_of_day, clinic_id, doctor_id)
     monitoring.monitor_visits(filtered_terms, email)

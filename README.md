@@ -61,7 +61,7 @@ and date range which you are interested in.
  you are interested in:
  
 ```shell script
-python yalma services --city-id your_city_id
+python yalma services
 ```
  
  Now you can start to monitor visits for your criteria. To check how to do that, you can use a `--help` option on the 
