@@ -4,12 +4,12 @@ from datetime import datetime
 class Report:
 
     @staticmethod
-    def _generate_report(all_terms: []) -> {}:
+    def __generate_report(all_terms: []) -> {}:
         terms = []
         overall_count = 0
 
         for term in all_terms:
-            visits_in_clinics = Report._group_visits_by_clinic(term)
+            visits_in_clinics = Report.__group_visits_by_clinic(term)
 
             date = term['date']
             count = len(term['visits'])
@@ -21,7 +21,7 @@ class Report:
         return {'overall_count': overall_count, 'terms': terms}
 
     @staticmethod
-    def _group_visits_by_clinic(visits: []) -> []:
+    def __group_visits_by_clinic(visits: []) -> []:
         visits_in_clinics = []
 
         raw_grouped_visits = {}
@@ -48,7 +48,7 @@ class Report:
         return visits_in_clinics
 
     def __init__(self, all_terms):
-        self._report = Report._generate_report(all_terms)
+        self._report = Report.__generate_report(all_terms)
 
     def get_report(self) -> {}:
         return self._report
