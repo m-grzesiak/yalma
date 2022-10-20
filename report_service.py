@@ -3,6 +3,16 @@ import utils
 from report import Report
 
 
+def make_report(terms: {}, email_address: str):
+    report = Report(terms)
+
+    if report.is_any_visit_available():
+        print("Terms have been found. Notification will be sent.")
+        __notify_about_visits_availability(email_address, report)
+    else:
+        print("There are no terms available. Notification will not be sent.")
+
+
 def __notify_about_visits_availability(email_address: str, report: Report):
     notification_message = __create_report_summary(report) + __create_report_details(report)
     email_sender.send_email(email_address, notification_message)
@@ -41,13 +51,3 @@ def __create_report_details(report: Report) -> str:
                                   + visits_in_day['doctor_name'] + "\n"
 
     return report_details
-
-
-def monitor_visits(visits: {}, email_address: str):
-    report = Report(visits)
-
-    if report.is_any_visit_available():
-        print("Visits have been found. Notification will be sent.")
-        __notify_about_visits_availability(email_address, report)
-    else:
-        print("There are no visits available. Notification will not be sent.")
