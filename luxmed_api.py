@@ -129,7 +129,6 @@ def __get_access_token() -> str:
     response = requests.post("%s/PatientPortalMobileAPI/api/token" % __BASE_DOMAIN, headers=headers,
                              data=authentication_body)
 
-    print(response.status_code)
     __validate_response(response)
     return response.json()['access_token']
 
