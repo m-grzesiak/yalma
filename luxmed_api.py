@@ -1,10 +1,16 @@
 import random
 import uuid
 from datetime import datetime
+from enum import Enum
 
 import requests
 
 import config_loader
+
+
+class Language(Enum):
+    POLISH = 10
+    ENGLISH = 11
 
 
 class LuxmedApiException(Exception):
@@ -42,8 +48,8 @@ def get_doctors(city_id: int, service_id: int) -> []:
         "/Dictionary/facilitiesAndDoctors?cityId=%d&serviceVariantId=%d" % (city_id, service_id))
 
 
-def get_terms(city_id: int, service_id: int, from_date: datetime, to_date: datetime, clinic_id: int = None,
-              doctor_id: int = None) -> []:
+def get_terms(city_id: int, service_id: int, from_date: datetime, to_date: datetime, language: Language,
+              clinic_id: int = None, doctor_id: int = None) -> []:
     print("Getting terms for given search parameters...")
 
     session = __log_in()
@@ -58,7 +64,7 @@ def get_terms(city_id: int, service_id: int, from_date: datetime, to_date: datet
     params = {
         "cityId": city_id,
         "serviceVariantId": service_id,
-        "languageId": 10,
+        "languageId": language.value,
         "searchDateFrom": from_date.strftime("%Y-%m-%d"),
         "searchDateTo": to_date.strftime("%Y-%m-%d"),
         "facilitiesIds": clinic_id,

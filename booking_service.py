@@ -3,6 +3,7 @@ from typing import Callable, Any, Union
 
 import luxmed_api
 import utils
+from luxmed_api import Language
 
 
 def get_cities():
@@ -40,8 +41,8 @@ def get_doctors(city_id: int, service_id: int, clinic_id: int = None) -> [{}]:
 
 
 def get_available_terms(city_id: int, service_id: int, from_date: datetime, to_date: datetime, part_of_day: int,
-                        language: str, clinic_id: int = None, doctor_id: int = None) -> [{}]:
-    result = luxmed_api.get_terms(city_id, service_id, from_date, to_date, clinic_id, doctor_id)
+                        language: Language, clinic_id: int = None, doctor_id: int = None) -> [{}]:
+    result = luxmed_api.get_terms(city_id, service_id, from_date, to_date, language, clinic_id, doctor_id)
     available_terms = [__parse_terms_for_day(terms_per_day) for terms_per_day in result]
     filtered_terms_by_dates = __filter_terms_by_dates(available_terms, from_date, to_date)
     return __filter_terms_by_criteria(filtered_terms_by_dates, part_of_day, clinic_id, doctor_id)
