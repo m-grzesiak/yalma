@@ -37,11 +37,11 @@ and date range which you are interested in.
 
     ##### Luxmed section
     * you have to provide your `username` and `password` there;
-    * `language` position has 2 possible values: `en` or `pl` - this setting has not any influence on returned data 
-    (like specialization names) from the Luxmed system - it only defines the language of errors you can receive 
-    from that API. 
-     
-    ##### Email settings section
+    * `language` position has 2 possible values: `en` or `pl` - this setting has an influence on returned data
+      (like specialization names) from the Luxmed system and errors. **This flag doesn't affect the language used by the
+      doctor during a visit**
+
+   ##### Email settings section
     These are settings for sending email to you when any visits are available. Your `username` is an email address
     from which the email will be sent as a notification about newly available visits.
     * `username` and `password` is pretty obvious ;)
