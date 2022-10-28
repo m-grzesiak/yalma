@@ -6,6 +6,7 @@ from tabulate import tabulate
 import booking_service
 import config_loader
 import report_service
+from luxmed_api import Language
 
 
 @click.group()
@@ -53,8 +54,6 @@ def services():
 @click.option('-t', '--to-date', type=click.DateTime(formats=["%Y-%m-%d"]), required=True,
               help='finish on the given date. The date should be in a year-month-day format. '
                    'Example: 2020-11-30')
-@click.option('-cl', '--clinic-id', type=int, help='monitor visits in the given clinic')
-@click.option('-d', '--doctor-id', type=int, help='monitor visits for the given doctor')
 @click.option('-td', '--time-of-day', type=click.IntRange(0, 3),
               default=0, show_default=True,
               help='time of day. If not provided, all day will be considered. Possible values: '
@@ -62,11 +61,16 @@ def services():
                    '1 - until 12:00, '
                    '2 - from 12:00 to 17:00, '
                    '3 - after 17:00')
-def monitor(email, city_id, service_id, from_date, to_date, time_of_day, clinic_id=None, doctor_id=None):
+@click.option('-l', '--language', type=click.Choice(['pl', 'eng'], case_sensitive=False), default='pl',
+              show_default=True, help='the language in which the doctor communicates with a patient')
+@click.option('-d', '--doctor-id', type=int, help='monitor visits for the given doctor')
+@click.option('-cl', '--clinic-id', type=int, help='monitor visits in the given clinic')
+def monitor(email, city_id, service_id, from_date, to_date, time_of_day, language, clinic_id=None, doctor_id=None):
     parsed_from_date = from_date.date()
     parsed_to_date = to_date.date()
+    parsed_language = __resolve_language(language)
     available_terms = booking_service.get_available_terms(city_id, service_id, parsed_from_date, parsed_to_date,
-                                                          time_of_day, clinic_id, doctor_id)
+                                                          time_of_day, parsed_language, clinic_id, doctor_id)
     report_service.make_report(available_terms, email)
 
 
@@ -77,6 +81,10 @@ def __display_results(results: {}, headers: [str]):
         print(table_view)
     else:
         print("No results have found for given criteria")
+
+
+def __resolve_language(language: str) -> Language:
+    return Language.POLISH if language == "pl" else Language.ENGLISH
 
 
 if __name__ == '__main__':
