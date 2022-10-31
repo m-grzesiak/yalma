@@ -11,22 +11,22 @@ class Report:
         for term in all_terms:
             visits_in_clinics = Report.__group_visits_by_clinic(term)
 
-            date = term['date']
-            count = len(term['visits'])
-            term = {'date': date, 'count': count, 'visits': term['visits'], 'visits_in_clinics': visits_in_clinics}
+            date = term["date"]
+            count = len(term["visits"])
+            term = {"date": date, "count": count, "visits": term["visits"], "visits_in_clinics": visits_in_clinics}
 
             terms.append(term)
             overall_count += count
 
-        return {'overall_count': overall_count, 'terms': terms}
+        return {"overall_count": overall_count, "terms": terms}
 
     @staticmethod
     def __group_visits_by_clinic(visits: []) -> []:
         visits_in_clinics = []
 
         raw_grouped_visits = {}
-        for visit in visits['visits']:
-            clinic_name = visit['clinic_name']
+        for visit in visits["visits"]:
+            clinic_name = visit["clinic_name"]
             raw_grouped_visits[clinic_name] = raw_grouped_visits.get(clinic_name, [])
             raw_grouped_visits[clinic_name].append(visit)
 
@@ -35,14 +35,14 @@ class Report:
             new_visits_definitions = []
 
             for definition in old_visit_definitions:
-                doctor_name = definition['doctor_name']
-                time = definition['time']
-                visit_details = {'doctor_name': doctor_name, 'time': time}
+                doctor_name = definition["doctor_name"]
+                time = definition["time"]
+                visit_details = {"doctor_name": doctor_name, "time": time}
                 new_visits_definitions.append(visit_details)
 
             visits_in_clinic_count = len(new_visits_definitions)
-            visit_details = {'clinic_name': clinic_name, 'count': visits_in_clinic_count,
-                             'visits': new_visits_definitions}
+            visit_details = {"clinic_name": clinic_name, "count": visits_in_clinic_count,
+                             "visits": new_visits_definitions}
             visits_in_clinics.append(visit_details)
 
         return visits_in_clinics
@@ -54,4 +54,4 @@ class Report:
         return self._report
 
     def is_any_visit_available(self) -> bool:
-        return self._report['overall_count'] > 0
+        return self._report["overall_count"] > 0
