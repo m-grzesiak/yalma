@@ -17,7 +17,7 @@ class LuxmedApiException(Exception):
     pass
 
 
-__APP_VERSION = "4.19.0"
+__APP_VERSION = "4.29.0"
 __CUSTOM_USER_AGENT = f"Patient Portal; {__APP_VERSION}; {str(uuid.uuid4())}; Android; {str(random.randint(23, 29))};" \
                       f" {str(uuid.uuid4())}"
 __BASE_DOMAIN = "https://portalpacjenta.luxmed.pl"
@@ -52,16 +52,18 @@ def get_terms(city_id: int, service_id: int, from_date: datetime, to_date: datet
         "accept-language": __CONFIG["language"],
         "host": "portalpacjenta.luxmed.pl",
         "Content-Type": "application/json",
-        "x-requested-with": "XMLHttpRequest",
+        "x-requested-with": "XMLHttpRequest"
     }
     params = {
-        "cityId": city_id,
+        "searchPlace.id": city_id,
+        "searchPlace.type": 0,
         "serviceVariantId": service_id,
         "languageId": language.value,
         "searchDateFrom": from_date.strftime("%Y-%m-%d"),
         "searchDateTo": to_date.strftime("%Y-%m-%d"),
         "facilitiesIds": clinic_id,
-        "doctorsIds": doctor_id
+        "doctorsIds": doctor_id,
+        "delocalized": "false"
     }
     response = session.get(f"{__API_BASE_URL}/terms/index", headers=headers, params=params)
     __validate_response(response)
